@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+recordings/*.wav
+recordings/transcript.txt
+recordings/summary.md
+
+# VS Code
+.vscode/
+
