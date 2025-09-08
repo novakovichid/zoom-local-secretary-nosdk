@@ -39,6 +39,10 @@ curl -X POST http://localhost:8000/stop_recording
 curl -X POST http://localhost:8000/transcribe_and_summarize
 ```
 
+## Фронтенд
+
+В каталоге `frontend` есть простой статический интерфейс. Запустите сервер, а затем откройте файл `frontend/index.html` в браузере (или поднимите локальный HTTP-сервер через `python -m http.server` внутри каталога). Интерфейс позволяет запускать и останавливать запись, а также запускать распознавание и отображать транскрипт и резюме.
+
 ## Файлы
 - `recordings/meeting.wav` – исходное аудио
 - `recordings/transcript.txt` – расшифровка речи
