@@ -34,7 +34,20 @@ class AudioRecorder:
             raise RuntimeError("Recording already in progress")
 
         console.log("Starting audio capture via WASAPI loopback")
-        wasapi = sd.WasapiSettings(loopback=True)
+        try:
+            wasapi = sd.WasapiSettings(loopback=True)
+        except TypeError:
+            # Older versions of sounddevice do not support the *loopback*
+            # argument.  Fall back to default settings and enable loopback
+            # if the attribute exists.  This keeps recording functional even
+            # with outdated installations.
+            wasapi = sd.WasapiSettings()
+            if hasattr(wasapi, "loopback"):
+                wasapi.loopback = True
+            else:
+                console.log(
+                    "Loopback capture not supported; falling back to default input device"
+                )
         self._stream = sd.InputStream(
             samplerate=self.samplerate,
             channels=self.channels,
