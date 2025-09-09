@@ -34,26 +34,36 @@ class AudioRecorder:
             raise RuntimeError("Recording already in progress")
 
         console.log("Starting audio capture via WASAPI loopback")
+        extra: Optional[sd.WasapiSettings] = None
         try:
-            wasapi = sd.WasapiSettings(loopback=True)
+            extra = sd.WasapiSettings(loopback=True)
         except TypeError:
             # Older versions of sounddevice do not support the *loopback*
-            # argument.  Fall back to default settings and enable loopback
-            # if the attribute exists.  This keeps recording functional even
-            # with outdated installations.
-            wasapi = sd.WasapiSettings()
-            if hasattr(wasapi, "loopback"):
-                wasapi.loopback = True
-            else:
+            # argument.  Fall back to default settings and enable loopback if
+            # possible.  If WASAPI isn't available at all (e.g. on Linux or
+            # with very old PortAudio builds) skip the extra settings so that
+            # we can still record from the default input device instead of
+            # crashing with a host API error.
+            try:
+                extra = sd.WasapiSettings()
+                if hasattr(extra, "loopback"):
+                    extra.loopback = True
+                else:
+                    console.log(
+                        "Loopback capture not supported; falling back to default input device"
+                    )
+                    extra = None
+            except Exception:
                 console.log(
-                    "Loopback capture not supported; falling back to default input device"
+                    "WASAPI not available; falling back to default input device"
                 )
+
         self._stream = sd.InputStream(
             samplerate=self.samplerate,
             channels=self.channels,
             dtype=self.dtype,
             callback=self._callback,
-            extra_settings=wasapi,
+            extra_settings=extra,
         )
         self._stream.start()
         self._recording = True
