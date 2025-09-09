@@ -1,6 +1,5 @@
 const statusEl = document.getElementById('status');
 const transcriptEl = document.getElementById('transcript');
-const summaryEl = document.getElementById('summary');
 
 async function post(endpoint) {
   const res = await fetch(`http://localhost:8000/${endpoint}`, { method: 'POST' });
@@ -34,15 +33,10 @@ document.getElementById('stop').onclick = async () => {
 document.getElementById('run').onclick = async () => {
   statusEl.textContent = 'Processing…';
   transcriptEl.textContent = '';
-  summaryEl.textContent = '';
   try {
-    const data = await post('transcribe_and_summarize');
-    const [tResp, sResp] = await Promise.all([
-      fetch(`http://localhost:8000/${data.transcript_path}`),
-      fetch(`http://localhost:8000/${data.summary_path}`)
-    ]);
+    const data = await post('transcribe');
+    const tResp = await fetch(`http://localhost:8000/${data.transcript_path}`);
     transcriptEl.textContent = await tResp.text();
-    summaryEl.textContent = await sResp.text();
     statusEl.textContent = 'Done';
   } catch (err) {
     statusEl.textContent = err.message;
