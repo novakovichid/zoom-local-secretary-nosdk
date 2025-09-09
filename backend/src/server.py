@@ -1,8 +1,6 @@
 """FastAPI server for Zoom Local Secretary."""
 from __future__ import annotations
 
-from pathlib import Path
-
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -10,7 +8,7 @@ from rich.console import Console
 
 from .config import config
 from .recorder import AudioRecorder
-from .pipeline import transcribe_and_summarize
+from .pipeline import transcribe
 
 console = Console()
 app = FastAPI(title="Zoom Local Secretary")
@@ -49,15 +47,12 @@ async def stop_recording() -> dict:
         raise HTTPException(status_code=500, detail=str(exc))
 
 
-@app.post("/transcribe_and_summarize")
+@app.post("/transcribe")
 async def run_pipeline() -> dict:
-    """Transcribe the recording and summarize it."""
+    """Transcribe the recording."""
     try:
-        t_path, s_path = transcribe_and_summarize(AUDIO_PATH, config)
-        return {
-            "transcript_path": str(t_path),
-            "summary_path": str(s_path),
-        }
+        t_path = transcribe(AUDIO_PATH, config)
+        return {"transcript_path": str(t_path)}
     except Exception as exc:
         console.log(f"Pipeline failed: {exc}")
         raise HTTPException(status_code=500, detail=str(exc))

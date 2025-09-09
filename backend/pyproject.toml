@@ -1,7 +1,7 @@
 [project]
 name = "zoom-local-secretary-wasapi"
 version = "0.1.0"
-description = "Local Zoom secretary capturing system audio, transcribing and summarizing."
+description = "Local Zoom secretary capturing system audio and transcribing it to text."
 authors = [{name = "Zoom Secretary"}]
 requires-python = ">=3.10"
 dependencies = [
@@ -10,7 +10,6 @@ dependencies = [
     "numpy",
     "fastapi",
     "uvicorn",
-    "requests",
     "rich",
     "python-dotenv"
 ]

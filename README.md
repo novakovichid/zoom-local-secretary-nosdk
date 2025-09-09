@@ -1,8 +1,7 @@
 # Zoom Local Secretary (WASAPI)
 
-Локальный «секретарь» для Zoom-встреч, который перехватывает системный звук Windows, 
-транскрибирует русскую речь офлайн через [faster-whisper](https://github.com/guillaumekln/faster-whisper)
-и делает краткое резюме встречи через локальный сервер [LM Studio](https://lmstudio.ai/).
+Локальный «секретарь» для Zoom-встреч, который перехватывает системный звук Windows
+и переводит его в текст офлайн через [faster-whisper](https://github.com/guillaumekln/faster-whisper).
 
 ## Установка
 
@@ -25,7 +24,7 @@ uvicorn backend.src.server:app --reload
 |---------|----------|
 | `POST /start_recording` | Начать запись системного аудио. |
 | `POST /stop_recording` | Остановить запись и сохранить `recordings/meeting.wav`. |
-| `POST /transcribe_and_summarize` | Запустить распознавание и резюме. Сохраняет `recordings/transcript.txt` и `recordings/summary.md`. |
+| `POST /transcribe` | Запустить распознавание. Сохраняет `recordings/transcript.txt`. |
 
 Примеры:
 ```bash
@@ -35,15 +34,14 @@ curl -X POST http://localhost:8000/start_recording
 # остановить запись
 curl -X POST http://localhost:8000/stop_recording
 
-# транскрипция и резюме
-curl -X POST http://localhost:8000/transcribe_and_summarize
+# транскрипция
+curl -X POST http://localhost:8000/transcribe
 ```
 
 ## Фронтенд
 
-В каталоге `frontend` есть простой статический интерфейс. Запустите сервер, а затем откройте файл `frontend/index.html` в браузере (или поднимите локальный HTTP-сервер через `python -m http.server` внутри каталога). Интерфейс позволяет запускать и останавливать запись, а также запускать распознавание и отображать транскрипт и резюме.
+В каталоге `frontend` есть простой статический интерфейс. Запустите сервер, а затем откройте файл `frontend/index.html` в браузере (или поднимите локальный HTTP-сервер через `python -m http.server` внутри каталога). Интерфейс позволяет запускать и останавливать запись, а также запускать распознавание и отображать транскрипт.
 
 ## Файлы
 - `recordings/meeting.wav` – исходное аудио
-- `recordings/transcript.txt` – расшифровка речи
-- `recordings/summary.md` – краткое резюме встречи
+- `recordings/transcript.txt` – расшифровка речи с временными метками
