@@ -1,7 +1,9 @@
 """FastAPI server for Zoom Local Secretary."""
 from __future__ import annotations
 
-from fastapi import FastAPI, HTTPException
+import shutil
+
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from rich.console import Console
@@ -55,4 +57,18 @@ async def run_pipeline() -> dict:
         return {"transcript_path": str(t_path)}
     except Exception as exc:
         console.log(f"Pipeline failed: {exc}")
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.post("/transcribe_file")
+async def transcribe_file(file: UploadFile = File(...)) -> dict:
+    """Upload an audio file and transcribe it."""
+    try:
+        upload_path = config.recordings_dir / file.filename
+        with upload_path.open("wb") as f:
+            shutil.copyfileobj(file.file, f)
+        t_path = transcribe(upload_path, config)
+        return {"transcript_path": str(t_path)}
+    except Exception as exc:
+        console.log(f"File transcription failed: {exc}")
         raise HTTPException(status_code=500, detail=str(exc))
