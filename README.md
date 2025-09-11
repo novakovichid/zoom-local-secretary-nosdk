@@ -25,6 +25,7 @@ uvicorn backend.src.server:app --reload
 | `POST /api/start_recording` | Начать запись системного аудио. |
 | `POST /api/stop_recording` | Остановить запись и сохранить `recordings/meeting.wav`. |
 | `POST /api/transcribe` | Запустить распознавание. Сохраняет `recordings/transcript.txt`. |
+| `POST /api/transcribe_file` | Загрузить аудиофайл и получить его транскрипт. |
 
 Примеры:
 ```bash
@@ -36,6 +37,9 @@ curl -X POST http://localhost:8000/api/stop_recording
 
 # транскрипция
 curl -X POST http://localhost:8000/api/transcribe
+
+# транскрипция загруженного файла
+curl -F "file=@sample.wav" http://localhost:8000/api/transcribe_file
 ```
 
 ## Интерфейс

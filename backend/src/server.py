@@ -63,13 +63,8 @@ async def run_pipeline() -> dict:
         raise HTTPException(status_code=500, detail=str(exc))
 
 
-# Serve recordings and frontend assets
-app.mount("/recordings", StaticFiles(directory=config.recordings_dir), name="recordings")
-frontend_dir = Path(__file__).resolve().parents[2] / "frontend"
-app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")
-
-
-@app.post("/transcribe_file")
+# Upload and transcribe arbitrary audio files
+@app.post("/api/transcribe_file")
 async def transcribe_file(file: UploadFile = File(...)) -> dict:
     """Upload an audio file and transcribe it."""
     try:
@@ -81,4 +76,10 @@ async def transcribe_file(file: UploadFile = File(...)) -> dict:
     except Exception as exc:
         console.log(f"File transcription failed: {exc}")
         raise HTTPException(status_code=500, detail=str(exc))
+
+
+# Serve recordings and frontend assets
+app.mount("/recordings", StaticFiles(directory=config.recordings_dir), name="recordings")
+frontend_dir = Path(__file__).resolve().parents[2] / "frontend"
+app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")
 
