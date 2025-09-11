@@ -3,7 +3,7 @@ const transcriptEl = document.getElementById('transcript');
 const fileInput = document.getElementById('file');
 
 async function post(endpoint) {
-  const res = await fetch(`http://localhost:8000/${endpoint}`, { method: 'POST' });
+  const res = await fetch(`/api/${endpoint}`, { method: 'POST' });
   if (!res.ok) {
     const text = await res.text();
     throw new Error(text || res.statusText);
@@ -36,7 +36,7 @@ document.getElementById('run').onclick = async () => {
   transcriptEl.textContent = '';
   try {
     const data = await post('transcribe');
-    const tResp = await fetch(`http://localhost:8000/${data.transcript_path}`);
+    const tResp = await fetch(`/${data.transcript_path}`);
     transcriptEl.textContent = await tResp.text();
     statusEl.textContent = 'Done';
   } catch (err) {

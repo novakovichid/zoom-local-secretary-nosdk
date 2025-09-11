@@ -22,25 +22,25 @@ uvicorn backend.src.server:app --reload
 
 | Маршрут | Описание |
 |---------|----------|
-| `POST /start_recording` | Начать запись системного аудио. |
-| `POST /stop_recording` | Остановить запись и сохранить `recordings/meeting.wav`. |
-| `POST /transcribe` | Запустить распознавание. Сохраняет `recordings/transcript.txt`. |
+| `POST /api/start_recording` | Начать запись системного аудио. |
+| `POST /api/stop_recording` | Остановить запись и сохранить `recordings/meeting.wav`. |
+| `POST /api/transcribe` | Запустить распознавание. Сохраняет `recordings/transcript.txt`. |
 
 Примеры:
 ```bash
 # начать запись
-curl -X POST http://localhost:8000/start_recording
+curl -X POST http://localhost:8000/api/start_recording
 
 # остановить запись
-curl -X POST http://localhost:8000/stop_recording
+curl -X POST http://localhost:8000/api/stop_recording
 
 # транскрипция
-curl -X POST http://localhost:8000/transcribe
+curl -X POST http://localhost:8000/api/transcribe
 ```
 
-## Фронтенд
+## Интерфейс
 
-В каталоге `frontend` есть простой статический интерфейс. Запустите сервер, а затем откройте файл `frontend/index.html` в браузере (или поднимите локальный HTTP-сервер через `python -m http.server` внутри каталога). Интерфейс позволяет запускать и останавливать запись, а также запускать распознавание и отображать транскрипт.
+После запуска сервера откройте [http://localhost:8000/](http://localhost:8000/) — будет отображён простой веб-интерфейс, позволяющий управлять записью, запускать распознавание и просматривать транскрипт.
 
 ## Файлы
 - `recordings/meeting.wav` – исходное аудио
