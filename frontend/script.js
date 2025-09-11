@@ -54,7 +54,7 @@ document.getElementById('run-file').onclick = async () => {
   const formData = new FormData();
   formData.append('file', fileInput.files[0]);
   try {
-    const res = await fetch('/transcribe_file', {
+    const res = await fetch('/api/transcribe_file', {
       method: 'POST',
       body: formData,
     });
