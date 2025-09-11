@@ -1,6 +1,8 @@
 """FastAPI server for Zoom Local Secretary."""
 from __future__ import annotations
 
+from pathlib import Path
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -19,13 +21,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.mount("/recordings", StaticFiles(directory=config.recordings_dir), name="recordings")
 
 recorder = AudioRecorder()
 AUDIO_PATH = config.recordings_dir / "meeting.wav"
 
 
-@app.post("/start_recording")
+@app.post("/api/start_recording")
 async def start_recording() -> dict:
     """Begin capturing system audio."""
     try:
@@ -36,7 +37,7 @@ async def start_recording() -> dict:
         raise HTTPException(status_code=500, detail=str(exc))
 
 
-@app.post("/stop_recording")
+@app.post("/api/stop_recording")
 async def stop_recording() -> dict:
     """Stop capturing and save the WAV file."""
     try:
@@ -47,7 +48,7 @@ async def stop_recording() -> dict:
         raise HTTPException(status_code=500, detail=str(exc))
 
 
-@app.post("/transcribe")
+@app.post("/api/transcribe")
 async def run_pipeline() -> dict:
     """Transcribe the recording."""
     try:
@@ -56,3 +57,10 @@ async def run_pipeline() -> dict:
     except Exception as exc:
         console.log(f"Pipeline failed: {exc}")
         raise HTTPException(status_code=500, detail=str(exc))
+
+
+# Serve recordings and frontend assets
+app.mount("/recordings", StaticFiles(directory=config.recordings_dir), name="recordings")
+frontend_dir = Path(__file__).resolve().parent.parent / "frontend"
+app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")
+
