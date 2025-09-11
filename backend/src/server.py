@@ -61,6 +61,6 @@ async def run_pipeline() -> dict:
 
 # Serve recordings and frontend assets
 app.mount("/recordings", StaticFiles(directory=config.recordings_dir), name="recordings")
-frontend_dir = Path(__file__).resolve().parent.parent / "frontend"
+frontend_dir = Path(__file__).resolve().parents[2] / "frontend"
 app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")
 
