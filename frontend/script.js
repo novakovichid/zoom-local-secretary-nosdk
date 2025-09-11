@@ -54,7 +54,7 @@ document.getElementById('run-file').onclick = async () => {
   const formData = new FormData();
   formData.append('file', fileInput.files[0]);
   try {
-    const res = await fetch('http://localhost:8000/transcribe_file', {
+    const res = await fetch('/transcribe_file', {
       method: 'POST',
       body: formData,
     });
@@ -62,7 +62,10 @@ document.getElementById('run-file').onclick = async () => {
       throw new Error((await res.text()) || res.statusText);
     }
     const data = await res.json();
-    const tResp = await fetch(`http://localhost:8000/${data.transcript_path}`);
+    const tResp = await fetch(`/${data.transcript_path}`);
+    if (!tResp.ok) {
+      throw new Error((await tResp.text()) || tResp.statusText);
+    }
     transcriptEl.textContent = await tResp.text();
     statusEl.textContent = 'Done';
   } catch (err) {
