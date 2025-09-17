@@ -11,6 +11,16 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+def _int_from_env(name: str, default: int) -> int:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    try:
+        return int(value)
+    except ValueError:
+        return default
+
+
 @dataclass
 class Config:
     """Application configuration."""
@@ -21,6 +31,7 @@ class Config:
     asr_lang: str = os.getenv("ASR_LANG", "ru")
 
     recordings_dir: Path = Path("recordings")
+    max_recordings: int = max(1, _int_from_env("MAX_RECORDINGS", 10))
 
 
 config = Config()
