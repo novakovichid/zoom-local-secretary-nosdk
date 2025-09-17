@@ -19,13 +19,16 @@ def _format_ts(seconds: float) -> str:
     return f"{h:02d}:{m:02d}:{s:02d}"
 
 
-def transcribe(audio_path: Path, cfg: Config) -> Path:
+def transcribe(
+    audio_path: Path, cfg: Config, *, transcript_path: Path | None = None
+) -> Path:
     """Transcribe *audio_path* and save the result to a text file.
 
     Each line of the transcript contains the segment index, start and end
     timestamps, and the recognized text.
     """
-    transcript_path = cfg.recordings_dir / "transcript.txt"
+    if transcript_path is None:
+        transcript_path = cfg.recordings_dir / "transcript.txt"
 
     console.log("Loading ASR model")
     model = WhisperModel(
